@@ -4,14 +4,20 @@ import { getFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 import { FirebaseCustomConfig } from '../types';
 
-export const DEFAULT_FIREBASE_CONFIG: FirebaseCustomConfig = {
-  apiKey: "AIzaSyDemoCommunityKey_Placeholder123",
-  authDomain: "community-app-hub.firebaseapp.com",
-  projectId: "community-app-hub",
-  storageBucket: "community-app-hub.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456"
+// Baked in at build time from Netlify/Vite env vars when present (see .env.example).
+// Falls back to a non-functional placeholder for local dev without a .env file —
+// the app then runs in local-storage demo mode until a user configures Firebase
+// at runtime via the Setup modal.
+const ENV_FIREBASE_CONFIG: FirebaseCustomConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDemoCommunityKey_Placeholder123",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "community-app-hub.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "community-app-hub",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "community-app-hub.appspot.com",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789012",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789012:web:abcdef123456"
 };
+
+export const DEFAULT_FIREBASE_CONFIG: FirebaseCustomConfig = ENV_FIREBASE_CONFIG;
 
 const STORAGE_KEY = 'community_hub_firebase_config';
 
