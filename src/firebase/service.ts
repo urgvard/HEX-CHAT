@@ -512,12 +512,15 @@ export async function saveUserProfile(
 
   const path = `users/${profile.uid}`;
   try {
+    // Firestore rules require createdAt to be a `timestamp` type, so it must be set
+    // server-side rather than passed through as the client's ISO string (which the
+    // rules would reject) — both call sites only ever create a fresh profile.
     await setDoc(doc(db, 'users', profile.uid), {
       uid: profile.uid,
       email: profile.email,
       displayName: profile.displayName,
       role: profile.role,
-      createdAt: profile.createdAt || serverTimestamp()
+      createdAt: serverTimestamp()
     }, { merge: true });
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
