@@ -422,6 +422,7 @@ export async function sendDirectMessage(
       id: convId,
       participants,
       lastMessage: summaryText,
+      lastMessageSenderId: senderId,
       updatedAt: new Date().toISOString()
     };
 
@@ -440,6 +441,7 @@ export async function sendDirectMessage(
       {
         participants,
         lastMessage: summaryText,
+        lastMessageSenderId: senderId,
         updatedAt: serverTimestamp()
       },
       { merge: true }

@@ -81,7 +81,8 @@ service cloud.firestore {
              data.participants is list && data.participants.size() == 2 &&
              data.participants[0] is string && data.participants[1] is string &&
              data.lastMessage is string && data.lastMessage.size() <= 1000 &&
-             data.updatedAt is timestamp;
+             data.updatedAt is timestamp &&
+             (!('lastMessageSenderId' in data) || (data.lastMessageSenderId is string && data.lastMessageSenderId.size() <= 128));
     }
 
     function isValidMessage(data) {

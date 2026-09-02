@@ -35,6 +35,11 @@ export interface Translations {
   installApp: string;
   installIOS: string;
   mobilePWAReady: string;
+  notificationsEnableBtn: string;
+  notificationsEnabledLabel: string;
+  notificationsBlockedLabel: string;
+  newNoticeNotifTitle: string;
+  newMessageNotifTitle: string;
 
   // Header
   topDocsBtn: string;
@@ -190,6 +195,11 @@ const translations: Record<Language, Translations> = {
     installApp: 'Install App',
     installIOS: 'Install on iOS',
     mobilePWAReady: 'Mobile PWA Ready',
+    notificationsEnableBtn: 'Enable Notifications',
+    notificationsEnabledLabel: 'Notifications On',
+    notificationsBlockedLabel: 'Notifications Blocked',
+    newNoticeNotifTitle: 'New Community Notice',
+    newMessageNotifTitle: 'New Direct Message',
 
     topDocsBtn: 'Firebase Docs',
 
@@ -334,6 +344,11 @@ const translations: Record<Language, Translations> = {
     installApp: 'Installera app',
     installIOS: 'Installera på iOS',
     mobilePWAReady: 'Mobil PWA redo',
+    notificationsEnableBtn: 'Aktivera aviseringar',
+    notificationsEnabledLabel: 'Aviseringar på',
+    notificationsBlockedLabel: 'Aviseringar blockerade',
+    newNoticeNotifTitle: 'Nytt gemenskapsanslag',
+    newMessageNotifTitle: 'Nytt direktmeddelande',
 
     topDocsBtn: 'Firebase Dokumentation',
 

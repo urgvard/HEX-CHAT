@@ -13,6 +13,7 @@ import {
 import { ActiveTab } from './types';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { PreferencesProvider, usePreferences } from './context/PreferencesContext';
+import { NotificationsProvider, useNotifications } from './context/NotificationsContext';
 import { Sidebar } from './components/Sidebar';
 import { NoticeBoard } from './components/NoticeBoard';
 import { DirectMessages } from './components/DirectMessages';
@@ -25,6 +26,7 @@ import { OfflineIndicator } from './components/OfflineIndicator';
 function MainApp() {
   const { currentUser, role, isAdmin } = useAuth();
   const { theme, toggleTheme, language, toggleLanguage, t } = usePreferences();
+  const { markNoticesRead, markMessagesRead } = useNotifications();
   const [activeTab, setActiveTab] = useState<ActiveTab>('notices');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -32,9 +34,16 @@ function MainApp() {
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [initialRecipientUid, setInitialRecipientUid] = useState<string | null>(null);
 
+  const handleSelectTab = (tab: ActiveTab) => {
+    setActiveTab(tab);
+    if (tab === 'notices') markNoticesRead();
+    if (tab === 'messages') markMessagesRead();
+  };
+
   const handleStartMessageFromDirectory = (targetUid: string) => {
     setInitialRecipientUid(targetUid);
     setActiveTab('messages');
+    markMessagesRead();
   };
 
   return (
@@ -45,7 +54,7 @@ function MainApp() {
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
-        onSelectTab={setActiveTab}
+        onSelectTab={handleSelectTab}
         isOpenMobile={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
         onOpenAuthModal={() => setIsAuthModalOpen(true)}
@@ -187,7 +196,9 @@ export default function App() {
   return (
     <PreferencesProvider>
       <AuthProvider>
-        <MainApp />
+        <NotificationsProvider>
+          <MainApp />
+        </NotificationsProvider>
       </AuthProvider>
     </PreferencesProvider>
   );

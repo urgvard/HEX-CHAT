@@ -24,6 +24,7 @@ export interface ConversationItem {
   id: string; // [uid1, uid2].sort().join("_")
   participants: string[];
   lastMessage: string;
+  lastMessageSenderId?: string;
   updatedAt: string | number | { seconds: number; nanoseconds: number };
   otherUser?: UserProfile;
 }

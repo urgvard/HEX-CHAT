@@ -1,6 +1,8 @@
 import React from 'react';
 import {
   Bell,
+  BellOff,
+  BellRing,
   MessageSquare,
   Users,
   BookOpen,
@@ -17,6 +19,7 @@ import {
 import { ActiveTab } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { usePreferences } from '../context/PreferencesContext';
+import { useNotifications } from '../context/NotificationsContext';
 import { PWAInstallButton } from './PWAInstallButton';
 
 interface SidebarProps {
@@ -40,31 +43,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { currentUser, role, isAdmin, logout, switchDemoRole, isLiveFirebase } = useAuth();
   const { theme, toggleTheme, language, toggleLanguage, t } = usePreferences();
+  const { noticesUnread, messagesUnread, permission, requestPermission } = useNotifications();
 
   const navItems = [
     {
       id: 'notices' as ActiveTab,
       label: t('navNoticeBoard'),
       icon: Bell,
-      description: t('navNoticeBoardDesc')
+      description: t('navNoticeBoardDesc'),
+      badge: noticesUnread
     },
     {
       id: 'messages' as ActiveTab,
       label: t('navDirectMessages'),
       icon: MessageSquare,
-      description: t('navDirectMessagesDesc')
+      description: t('navDirectMessagesDesc'),
+      badge: messagesUnread
     },
     {
       id: 'directory' as ActiveTab,
       label: isAdmin ? t('navAdminDirectory') : t('navDirectory'),
       icon: Users,
-      description: t('navDirectoryDesc')
+      description: t('navDirectoryDesc'),
+      badge: 0
     },
     {
       id: 'guide' as ActiveTab,
       label: t('navGuide'),
       icon: BookOpen,
-      description: t('navGuideDesc')
+      description: t('navGuideDesc'),
+      badge: 0
     }
   ];
 
@@ -153,6 +161,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                   </div>
 
+                  {item.badge > 0 && (
+                    <span className="shrink-0 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
+                      {item.badge > 9 ? '9+' : item.badge}
+                    </span>
+                  )}
+
                   {isActive && <ChevronRight className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />}
                 </button>
               );
@@ -191,6 +205,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <Sun className="w-3.5 h-3.5 text-amber-400" />
                 )}
               </button>
+
+              {/* Notification Permission Pill */}
+              {permission !== 'unsupported' && (
+                <button
+                  id="sidebar-toggle-notifications"
+                  onClick={permission === 'default' ? requestPermission : undefined}
+                  disabled={permission !== 'default'}
+                  className={`p-1 rounded-lg transition ${
+                    permission === 'granted'
+                      ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 cursor-default'
+                      : permission === 'denied'
+                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                  title={
+                    permission === 'granted'
+                      ? t('notificationsEnabledLabel')
+                      : permission === 'denied'
+                      ? t('notificationsBlockedLabel')
+                      : t('notificationsEnableBtn')
+                  }
+                >
+                  {permission === 'granted' ? (
+                    <BellRing className="w-3.5 h-3.5" />
+                  ) : permission === 'denied' ? (
+                    <BellOff className="w-3.5 h-3.5" />
+                  ) : (
+                    <Bell className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              )}
             </div>
           </div>
 
