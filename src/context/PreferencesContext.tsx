@@ -125,6 +125,9 @@ export interface Translations {
   pendingBadge: string;
   approveMemberBtn: string;
   memberApprovedSuccess: string;
+  emailNotifPrefsTitle: string;
+  emailOnDMsLabel: string;
+  emailOnNoticesLabel: string;
 
   // Auth Modal
   signInTitle: string;
@@ -294,6 +297,9 @@ const translations: Record<Language, Translations> = {
     pendingBadge: 'Pending Approval',
     approveMemberBtn: 'Approve',
     memberApprovedSuccess: 'Member approved!',
+    emailNotifPrefsTitle: 'Email me about',
+    emailOnDMsLabel: 'New direct messages',
+    emailOnNoticesLabel: 'New notices',
 
     signInTitle: 'Sign In to Community Hub',
     registerTitle: 'Create Community Account',
@@ -456,6 +462,9 @@ const translations: Record<Language, Translations> = {
     pendingBadge: 'Väntar på godkännande',
     approveMemberBtn: 'Godkänn',
     memberApprovedSuccess: 'Medlemmen har godkänts!',
+    emailNotifPrefsTitle: 'Skicka e-post om',
+    emailOnDMsLabel: 'Nya direktmeddelanden',
+    emailOnNoticesLabel: 'Nya anslag',
 
     signInTitle: 'Logga in på Gemenskapsportalen',
     registerTitle: 'Skapa gemenskapskonto',

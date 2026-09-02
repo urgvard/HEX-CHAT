@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Bell,
   BellOff,
@@ -14,12 +14,14 @@ import {
   ChevronRight,
   Sun,
   Moon,
-  Globe
+  Globe,
+  Mail
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { usePreferences } from '../context/PreferencesContext';
 import { useNotifications } from '../context/NotificationsContext';
+import { updateNotificationPreferences } from '../firebase/service';
 import { PWAInstallButton } from './PWAInstallButton';
 
 interface SidebarProps {
@@ -41,9 +43,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenConfigModal,
   onOpenGuideModal
 }) => {
-  const { currentUser, role, isAdmin, logout, switchDemoRole, isLiveFirebase } = useAuth();
+  const { currentUser, role, isAdmin, logout, switchDemoRole, isLiveFirebase, db } = useAuth();
   const { theme, toggleTheme, language, toggleLanguage, t } = usePreferences();
   const { noticesUnread, messagesUnread, permission, requestPermission } = useNotifications();
+
+  const [notifyOnDMs, setNotifyOnDMs] = useState(!!currentUser?.notifyOnDMs);
+  const [notifyOnNotices, setNotifyOnNotices] = useState(!!currentUser?.notifyOnNotices);
+
+  useEffect(() => {
+    setNotifyOnDMs(!!currentUser?.notifyOnDMs);
+    setNotifyOnNotices(!!currentUser?.notifyOnNotices);
+  }, [currentUser?.uid, currentUser?.notifyOnDMs, currentUser?.notifyOnNotices]);
+
+  const handleToggleNotifyOnDMs = () => {
+    if (!currentUser) return;
+    const next = !notifyOnDMs;
+    setNotifyOnDMs(next);
+    updateNotificationPreferences(db, currentUser.uid, { notifyOnDMs: next });
+  };
+
+  const handleToggleNotifyOnNotices = () => {
+    if (!currentUser) return;
+    const next = !notifyOnNotices;
+    setNotifyOnNotices(next);
+    updateNotificationPreferences(db, currentUser.uid, { notifyOnNotices: next });
+  };
 
   const navItems = [
     {
@@ -306,6 +330,44 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </button>
                 </div>
               </div>
+
+              {/* Email Notification Preferences (live Firebase only -- meaningless in local demo mode) */}
+              {isLiveFirebase && (
+                <div className="pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
+                    <Mail className="w-3 h-3" />
+                    <span>{t('emailNotifPrefsTitle')}</span>
+                  </div>
+                  <button
+                    id="btn-toggle-notify-dms"
+                    onClick={handleToggleNotifyOnDMs}
+                    className="w-full flex items-center justify-between gap-2 text-[11px] text-slate-700 dark:text-slate-300"
+                  >
+                    <span>{t('emailOnDMsLabel')}</span>
+                    <span className={`relative w-8 h-4.5 rounded-full transition shrink-0 ${
+                      notifyOnDMs ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'
+                    }`}>
+                      <span className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white shadow-xs transition-transform ${
+                        notifyOnDMs ? 'translate-x-[15px]' : 'translate-x-0.5'
+                      }`} />
+                    </span>
+                  </button>
+                  <button
+                    id="btn-toggle-notify-notices"
+                    onClick={handleToggleNotifyOnNotices}
+                    className="w-full flex items-center justify-between gap-2 text-[11px] text-slate-700 dark:text-slate-300"
+                  >
+                    <span>{t('emailOnNoticesLabel')}</span>
+                    <span className={`relative w-8 h-4.5 rounded-full transition shrink-0 ${
+                      notifyOnNotices ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'
+                    }`}>
+                      <span className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white shadow-xs transition-transform ${
+                        notifyOnNotices ? 'translate-x-[15px]' : 'translate-x-0.5'
+                      }`} />
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <button

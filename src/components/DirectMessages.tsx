@@ -23,6 +23,7 @@ import {
   getConversationId,
   uploadAttachmentFile
 } from '../firebase/service';
+import { triggerNotificationEmail } from '../lib/notifyEmail';
 
 interface DirectMessagesProps {
   initialRecipientUid?: string | null;
@@ -33,7 +34,7 @@ export const DirectMessages: React.FC<DirectMessagesProps> = ({
   initialRecipientUid,
   onClearInitialRecipient
 }) => {
-  const { currentUser, isAdmin, db, storage } = useAuth();
+  const { currentUser, isAdmin, db, storage, firebaseUser } = useAuth();
   const { t, formatLocalizedTime, language } = usePreferences();
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
@@ -193,6 +194,12 @@ export const DirectMessages: React.FC<DirectMessagesProps> = ({
         fileUrl,
         fileName
       });
+
+      if (firebaseUser) {
+        firebaseUser.getIdToken().then((idToken) =>
+          triggerNotificationEmail(idToken, 'new_dm', { recipientUid: activeRecipient.uid })
+        );
+      }
 
       setMessageText('');
       setSelectedFile(null);

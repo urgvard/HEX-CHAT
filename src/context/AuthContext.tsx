@@ -14,6 +14,7 @@ import {
   saveStoredFirebaseConfig
 } from '../firebase/config';
 import { saveUserProfile, localStore } from '../firebase/service';
+import { triggerNotificationEmail } from '../lib/notifyEmail';
 
 interface AuthContextType {
   currentUser: UserProfile | null;
@@ -153,6 +154,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await saveUserProfile(firebaseInstances.db, profile);
         }
         setCurrentUser(profile);
+        if (!isHardcodedAdmin) {
+          const idToken = await cred.user.getIdToken();
+          triggerNotificationEmail(idToken, 'new_member');
+        }
       } else {
         const newProfile: UserProfile = {
           uid: 'user_' + Date.now(),

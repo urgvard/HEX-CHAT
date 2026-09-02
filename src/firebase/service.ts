@@ -553,6 +553,31 @@ export async function approveMember(
 }
 
 /**
+ * Update the current user's own opt-in email notification preferences.
+ */
+export async function updateNotificationPreferences(
+  db: Firestore | null,
+  userId: string,
+  prefs: { notifyOnDMs?: boolean; notifyOnNotices?: boolean }
+): Promise<void> {
+  if (!db) {
+    const idx = localStore.users.findIndex((u) => u.uid === userId);
+    if (idx !== -1) {
+      localStore.users[idx] = { ...localStore.users[idx], ...prefs };
+      localStore.notifyUsers();
+    }
+    return;
+  }
+
+  const path = `users/${userId}`;
+  try {
+    await updateDoc(doc(db, 'users', userId), prefs);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path);
+  }
+}
+
+/**
  * Cloud Storage File Upload (Strict 10MB Guard)
  */
 export async function uploadAttachmentFile(

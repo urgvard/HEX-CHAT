@@ -42,7 +42,9 @@ service cloud.firestore {
              data.displayName is string && data.displayName.size() <= 100 &&
              data.role in ['admin', 'member'] &&
              data.createdAt is timestamp &&
-             (!('status' in data) || data.status in ['pending', 'approved']);
+             (!('status' in data) || data.status in ['pending', 'approved']) &&
+             (!('notifyOnDMs' in data) || data.notifyOnDMs is bool) &&
+             (!('notifyOnNotices' in data) || data.notifyOnNotices is bool);
     }
 
     function isValidNotice(data) {

@@ -24,9 +24,10 @@ import {
   deleteNotice,
   uploadAttachmentFile
 } from '../firebase/service';
+import { triggerNotificationEmail } from '../lib/notifyEmail';
 
 export const NoticeBoard: React.FC = () => {
-  const { currentUser, isAdmin, db, storage } = useAuth();
+  const { currentUser, isAdmin, db, storage, firebaseUser } = useAuth();
   const { t, formatLocalizedDate, language } = usePreferences();
   const [notices, setNotices] = useState<NoticeItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -144,6 +145,12 @@ export const NoticeBoard: React.FC = () => {
           authorName: currentUser?.displayName || 'Admin'
         });
         setSuccessMessage(t('noticeCreatedSuccess'));
+
+        if (firebaseUser) {
+          firebaseUser.getIdToken().then((idToken) =>
+            triggerNotificationEmail(idToken, 'new_notice')
+          );
+        }
       }
 
       setTimeout(() => setSuccessMessage(null), 4000);

@@ -7,6 +7,8 @@ export interface UserProfile {
   displayName: string;
   role: UserRole;
   status?: UserStatus; // absent == 'approved', for accounts created before this field existed
+  notifyOnDMs?: boolean; // opt-in email notification, default false
+  notifyOnNotices?: boolean; // opt-in email notification, default false
   createdAt: string | number | { seconds: number; nanoseconds: number };
   avatarColor?: string;
 }
