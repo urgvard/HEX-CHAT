@@ -237,7 +237,7 @@ export const DirectMessages: React.FC<DirectMessagesProps> = ({
             <input
               id="input-search-conversations"
               type="text"
-              placeholder={isAdmin ? t('searchConversations') : t('searchConversations')}
+              placeholder={t('searchConversations')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 shadow-xs transition"

@@ -82,6 +82,14 @@ export interface Translations {
   directMessagesTitle: string;
   conversationsHeader: string;
   searchConversationsPlaceholder: string;
+  searchConversations: string;
+  activeConversations: string;
+  allMembers: string;
+  startChatWithAdmin: string;
+  noMessagesYet: string;
+  noMessagesDesc: string;
+  sendMessageBtn: string;
+  noConversationSelected: string;
   selectConversationPrompt: string;
   selectConversationSubtitle: string;
   directMessageWith: string;
@@ -105,6 +113,7 @@ export interface Translations {
   adminsCount: string;
   membersCount: string;
   searchDirectoryPlaceholder: string;
+  allRoles: string;
   allRolesTab: string;
   adminsTab: string;
   membersTab: string;
@@ -112,6 +121,7 @@ export interface Translations {
   noMembersFoundDesc: string;
   memberSince: string;
   directMessageBtn: string;
+  youBadge: string;
 
   // Auth Modal
   signInTitle: string;
@@ -239,6 +249,14 @@ const translations: Record<Language, Translations> = {
     directMessagesTitle: 'Direct Messages',
     conversationsHeader: 'Conversations',
     searchConversationsPlaceholder: 'Search conversations...',
+    searchConversations: 'Search conversations...',
+    activeConversations: 'Active Conversations',
+    allMembers: 'All Members',
+    startChatWithAdmin: 'Start a Chat with Admin',
+    noMessagesYet: 'No messages yet',
+    noMessagesDesc: 'Send the first message below to start the conversation.',
+    sendMessageBtn: 'Send Message',
+    noConversationSelected: 'No conversation selected',
     selectConversationPrompt: 'Select a conversation to begin chatting',
     selectConversationSubtitle: 'Choose an active chat from the sidebar or start a direct message with a member or administrator.',
     directMessageWith: 'Direct Message with',
@@ -261,6 +279,7 @@ const translations: Record<Language, Translations> = {
     adminsCount: 'Admins',
     membersCount: 'Members',
     searchDirectoryPlaceholder: 'Search directory by name or email...',
+    allRoles: 'All Roles',
     allRolesTab: 'All Roles',
     adminsTab: 'Admins',
     membersTab: 'Members',
@@ -268,6 +287,7 @@ const translations: Record<Language, Translations> = {
     noMembersFoundDesc: 'Try adjusting your search query or role filter.',
     memberSince: 'Member since',
     directMessageBtn: 'Direct Message',
+    youBadge: 'You',
 
     signInTitle: 'Sign In to Community Hub',
     registerTitle: 'Create Community Account',
@@ -388,6 +408,14 @@ const translations: Record<Language, Translations> = {
     directMessagesTitle: 'Direktmeddelanden',
     conversationsHeader: 'Konversationer',
     searchConversationsPlaceholder: 'Sök konversationer...',
+    searchConversations: 'Sök konversationer...',
+    activeConversations: 'Aktiva konversationer',
+    allMembers: 'Alla medlemmar',
+    startChatWithAdmin: 'Starta en chatt med Admin',
+    noMessagesYet: 'Inga meddelanden än',
+    noMessagesDesc: 'Skicka det första meddelandet nedan för att starta konversationen.',
+    sendMessageBtn: 'Skicka meddelande',
+    noConversationSelected: 'Ingen konversation vald',
     selectConversationPrompt: 'Välj en konversation för att börja chatta',
     selectConversationSubtitle: 'Välj en aktiv konversation i sidomenyn eller starta ett nytt direktmeddelande med en medlem eller administratör.',
     directMessageWith: 'Direktmeddelande med',
@@ -410,6 +438,7 @@ const translations: Record<Language, Translations> = {
     adminsCount: 'Administratörer',
     membersCount: 'Medlemmar',
     searchDirectoryPlaceholder: 'Sök i registret efter namn eller e-post...',
+    allRoles: 'Alla roller',
     allRolesTab: 'Alla roller',
     adminsTab: 'Administratörer',
     membersTab: 'Medlemmar',
@@ -417,6 +446,7 @@ const translations: Record<Language, Translations> = {
     noMembersFoundDesc: 'Prova att justera din sökning eller rollfilter.',
     memberSince: 'Medlem sedan',
     directMessageBtn: 'Direktmeddelande',
+    youBadge: 'Du',
 
     signInTitle: 'Logga in på Gemenskapsportalen',
     registerTitle: 'Skapa gemenskapskonto',
