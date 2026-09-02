@@ -1,0 +1,42 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isUnder10MB() {
+      return request.resource == null || request.resource.size <= 10 * 1024 * 1024;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'urgvard@gmail.com' ||
+        request.auth.token.role == 'admin'
+      );
+    }
+
+    // Notice Board Attachments (10MB max, admin write, authenticated read)
+    match /notice_attachments/{noticeId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() && isUnder10MB();
+      allow delete: if isAdmin();
+    }
+
+    // Direct Message Attachments (10MB max, authenticated write, authenticated read)
+    match /conversation_attachments/{conversationId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isUnder10MB();
+      allow delete: if isSignedIn() && (request.auth.uid == request.resource.metadata.uploadedBy || isAdmin());
+    }
+
+    // General attachments fallback
+    match /attachments/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isUnder10MB();
+      allow delete: if isSignedIn();
+    }
+  }
+}

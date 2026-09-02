@@ -1,0 +1,6 @@
+{
+  "name": "Community Hub",
+  "description": "Secure community platform with notice board, real-time DMs with attachments, role management, and PWA mobile download.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

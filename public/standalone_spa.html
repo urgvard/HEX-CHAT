@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Community Hub - Standalone SPA</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- PWA & Mobile Meta Tags -->
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CommunityHub" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col md:flex-row antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- Mobile Topbar -->
+  <header class="md:hidden flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950 sticky top-0 z-30">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-sm">CH</div>
+      <span class="font-bold text-sm text-white">Community Hub</span>
+    </div>
+    <button id="mobileMenuBtn" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </header>
+
+  <!-- Sidebar Navigation -->
+  <aside id="sidebar" class="fixed md:sticky top-0 left-0 z-40 h-screen w-72 flex flex-col justify-between border-r border-slate-800 bg-slate-950 text-slate-200 -translate-x-full md:translate-x-0 transition-transform duration-300">
+    <div>
+      <div class="flex items-center justify-between p-5 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">CH</div>
+          <div>
+            <h1 class="text-sm font-bold text-white">Community Hub</h1>
+            <p id="authStatusText" class="text-[11px] text-slate-400">Loading auth...</p>
+          </div>
+        </div>
+        <button id="closeSidebarBtn" class="p-1.5 rounded-lg text-slate-400 hover:text-white md:hidden">✕</button>
+      </div>
+
+      <nav class="p-3.5 space-y-1.5">
+        <button id="navNotices" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left bg-blue-600/15 border border-blue-500/30 text-white font-semibold transition">
+          <span class="text-lg">📢</span>
+          <div>
+            <div class="text-xs">Notice Board</div>
+            <div class="text-[10px] text-slate-400 font-normal">Public announcements</div>
+          </div>
+        </button>
+        <button id="navMessages" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left text-slate-400 hover:bg-slate-900 hover:text-slate-200 transition">
+          <span class="text-lg">💬</span>
+          <div>
+            <div class="text-xs">Direct Messages</div>
+            <div class="text-[10px] text-slate-500 font-normal">Chat & attachments</div>
+          </div>
+        </button>
+        <button id="navDirectory" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left text-slate-400 hover:bg-slate-900 hover:text-slate-200 transition">
+          <span class="text-lg">👥</span>
+          <div>
+            <div class="text-xs">Member Directory</div>
+            <div class="text-[10px] text-slate-500 font-normal">Registered users</div>
+          </div>
+        </button>
+      </nav>
+    </div>
+
+    <!-- User Profile / Auth State Card -->
+    <div class="p-4 border-t border-slate-800 space-y-3 bg-slate-950/60">
+      <div id="pwaInstallContainer"></div>
+
+      <div id="userProfileCard" class="rounded-xl border border-slate-800 bg-slate-900 p-3 hidden">
+        <div class="flex items-center justify-between mb-1">
+          <span id="profileDisplayName" class="text-xs font-bold text-white truncate">User</span>
+          <span id="profileRoleBadge" class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase bg-blue-950 text-blue-300 border border-blue-800">Member</span>
+        </div>
+        <p id="profileEmail" class="text-[11px] text-slate-400 truncate mb-2">user@example.com</p>
+        <button id="logoutBtn" class="w-full py-1.5 text-xs text-rose-400 hover:bg-rose-950/40 rounded-lg transition border border-rose-900/30">Sign Out</button>
+      </div>
+
+      <div id="loginRegisterButtons" class="space-y-2">
+        <button id="openAuthModalBtn" class="w-full py-2.5 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-500 transition shadow-lg shadow-blue-600/20">Sign In / Register</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Viewport -->
+  <main class="flex-1 p-4 sm:p-6 lg:p-8 min-h-screen">
+    
+    <!-- NOTICE BOARD VIEW -->
+    <section id="viewNotices" class="space-y-6 max-w-4xl mx-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-lg font-bold text-white">Public Notice Board</h2>
+          <p class="text-xs text-slate-400">Broadcasts, documents & bylaws</p>
+        </div>
+        <button id="adminNewNoticeBtn" class="hidden px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shadow-md shadow-blue-600/25 transition">
+          + Post Announcement
+        </button>
+      </div>
+
+      <!-- Feed Container -->
+      <div id="noticeFeedContainer" class="space-y-4">
+        <div class="p-8 text-center text-slate-500 text-xs">Loading announcements...</div>
+      </div>
+    </section>
+
+    <!-- DIRECT MESSAGES VIEW -->
+    <section id="viewMessages" class="hidden max-w-5xl mx-auto h-[calc(100vh-6rem)] flex rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden">
+      <!-- DM Sidebar -->
+      <div class="w-full md:w-80 border-r border-slate-800 bg-slate-950 flex flex-col">
+        <div class="p-3 border-b border-slate-800">
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider">Conversations</h3>
+        </div>
+        <div id="conversationList" class="flex-1 overflow-y-auto p-2 space-y-1">
+          <div class="p-4 text-center text-slate-500 text-xs">Loading chats...</div>
+        </div>
+      </div>
+
+      <!-- DM Active Chat Window -->
+      <div class="hidden md:flex flex-1 flex-col bg-slate-900">
+        <div class="p-3.5 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
+          <div>
+            <h4 id="dmHeaderName" class="text-xs font-bold text-white">Select a conversation</h4>
+            <p id="dmHeaderSub" class="text-[10px] text-slate-400">1-on-1 Direct Messaging</p>
+          </div>
+        </div>
+        <div id="dmMessagesFeed" class="flex-1 p-4 overflow-y-auto space-y-3">
+          <div class="h-full flex items-center justify-center text-slate-500 text-xs">No conversation active</div>
+        </div>
+        <form id="dmSendForm" class="p-3 border-t border-slate-800 bg-slate-950 flex items-center gap-2">
+          <input type="file" id="dmFileInput" class="hidden" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />
+          <button type="button" id="dmFileBtn" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-blue-400">📎</button>
+          <input type="text" id="dmTextInput" placeholder="Type a message..." class="flex-1 px-3.5 py-2 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-none focus:border-blue-500" />
+          <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">Send</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- DIRECTORY VIEW -->
+    <section id="viewDirectory" class="hidden space-y-6 max-w-4xl mx-auto">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-lg font-bold text-white">Member Directory</h2>
+        <p class="text-xs text-slate-400">Registered community members</p>
+      </div>
+      <div id="directoryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+    </section>
+  </main>
+
+  <!-- Notice Create Modal -->
+  <div id="noticeModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-900 p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="text-base font-bold text-white">Post Notice Board Announcement</h3>
+        <button id="closeNoticeModalBtn" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form id="noticeForm" class="space-y-3">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Headline</label>
+          <input type="text" id="noticeTitleInput" required placeholder="Notice title..." class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Content</label>
+          <textarea id="noticeContentInput" required rows="4" placeholder="Announcement body..." class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Attachment (Max 10MB)</label>
+          <input type="file" id="noticeFileInput" class="text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700" />
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" id="cancelNoticeBtn" class="px-4 py-2 rounded-xl bg-slate-800 text-xs text-slate-300">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-500">Publish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="text-base font-bold text-white" id="authModalTitle">Sign In</h3>
+        <button id="closeAuthModalBtn" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form id="authForm" class="space-y-3">
+        <div id="authDisplayNameGroup" class="hidden">
+          <label class="block text-xs text-slate-300 mb-1">Display Name</label>
+          <input type="text" id="authDisplayNameInput" placeholder="Your name..." class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Email</label>
+          <input type="email" id="authEmailInput" required placeholder="user@example.com" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Password</label>
+          <input type="password" id="authPasswordInput" required placeholder="••••••••" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-none focus:border-blue-500" />
+        </div>
+        <button type="submit" id="authSubmitBtn" class="w-full py-2.5 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-500 transition">Sign In</button>
+      </form>
+      <div class="text-center pt-2">
+        <button id="toggleAuthModeBtn" class="text-xs text-blue-400 hover:underline">Need an account? Register here</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular Firebase Web SDK v10+ Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      createUserWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      doc, 
+      setDoc, 
+      addDoc, 
+      updateDoc, 
+      deleteDoc, 
+      query, 
+      orderBy, 
+      onSnapshot, 
+      serverTimestamp, 
+      getDoc 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { 
+      getStorage, 
+      ref, 
+      uploadBytesResumable, 
+      getDownloadURL 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    // 1. Firebase Configuration Object
+    const firebaseConfig = {
+      apiKey: "AIzaSyDemoCommunityKey_Placeholder123",
+      authDomain: "community-app-hub.firebaseapp.com",
+      projectId: "community-app-hub",
+      storageBucket: "community-app-hub.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef123456"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    console.log("Firebase Modular SDK initialized successfully.");
+  </script>
+</body>
+</html>

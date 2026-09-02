@@ -1,0 +1,152 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based permissions (admin or member).",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier of the user (matching Firebase Auth UID)",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address of the user",
+          "maxLength": 256
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Public community display name",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "member"],
+          "description": "Role determining access rights"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when user document was created"
+        }
+      },
+      "required": ["uid", "email", "displayName", "role", "createdAt"]
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "Public announcement posted to community notice board.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Notice headline",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "content": {
+          "type": "string",
+          "description": "Full announcement text content",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "fileUrl": {
+          "type": "string",
+          "description": "Download URL for document or image attachment",
+          "maxLength": 2048
+        },
+        "fileName": {
+          "type": "string",
+          "description": "Display name of attached document",
+          "maxLength": 256
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "Firebase Auth UID of the author",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when notice was posted"
+        }
+      },
+      "required": ["title", "content", "createdBy", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct message conversation thread metadata between two members or admin/member.",
+      "type": "object",
+      "properties": {
+        "participants": {
+          "type": "string",
+          "description": "Array of participant UIDs"
+        },
+        "lastMessage": {
+          "type": "string",
+          "description": "Preview text of most recent message",
+          "maxLength": 1000
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of most recent activity in thread"
+        }
+      },
+      "required": ["participants", "lastMessage", "updatedAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Individual direct message with optional file attachment inside a conversation subcollection.",
+      "type": "object",
+      "properties": {
+        "senderId": {
+          "type": "string",
+          "description": "UID of the user who sent this message",
+          "pattern": "^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "text": {
+          "type": "string",
+          "description": "Text body of the message",
+          "maxLength": 5000
+        },
+        "fileUrl": {
+          "type": "string",
+          "description": "Direct download URL for attached document or file",
+          "maxLength": 2048
+        },
+        "fileName": {
+          "type": "string",
+          "description": "Original filename of the attachment",
+          "maxLength": 256
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when message was sent"
+        }
+      },
+      "required": ["senderId", "text", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Directory of registered community members and admin profiles."
+    },
+    "/notice_board/{noticeId}": {
+      "schema": "Notice",
+      "description": "Community announcements posted by admins."
+    },
+    "/conversations/{conversationId}": {
+      "schema": "Conversation",
+      "description": "Direct message threads between users."
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Subcollection of messages belonging to a direct message conversation."
+    }
+  }
+}
