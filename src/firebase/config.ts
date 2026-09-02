@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 import { FirebaseCustomConfig } from '../types';
 
@@ -44,13 +44,21 @@ let storageInstance: FirebaseStorage | null = null;
 
 export function initFirebase(config: FirebaseCustomConfig = getStoredFirebaseConfig()) {
   try {
+    let isNewApp = false;
     if (!getApps().length) {
       appInstance = initializeApp(config);
+      isNewApp = true;
     } else {
       appInstance = getApp();
     }
     authInstance = getAuth(appInstance);
-    dbInstance = getFirestore(appInstance);
+    // initializeFirestore() can only be called once per app (it throws on a second
+    // call, unlike getFirestore()); ignoreUndefinedProperties lets writes include
+    // optional fields left as `undefined` (e.g. no attachment on a notice/message)
+    // without addDoc/setDoc throwing "Unsupported field value: undefined".
+    dbInstance = isNewApp
+      ? initializeFirestore(appInstance, { ignoreUndefinedProperties: true })
+      : getFirestore(appInstance);
     storageInstance = getStorage(appInstance);
     return { app: appInstance, auth: authInstance, db: dbInstance, storage: storageInstance, isLive: true };
   } catch (err) {

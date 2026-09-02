@@ -122,6 +122,9 @@ export interface Translations {
   memberSince: string;
   directMessageBtn: string;
   youBadge: string;
+  pendingBadge: string;
+  approveMemberBtn: string;
+  memberApprovedSuccess: string;
 
   // Auth Modal
   signInTitle: string;
@@ -131,9 +134,9 @@ export interface Translations {
   displayNameLabel: string;
   emailLabel: string;
   passwordLabel: string;
-  requestedRoleLabel: string;
-  roleMemberOption: string;
-  roleAdminOption: string;
+  pendingApprovalNotice: string;
+  pendingApprovalTitle: string;
+  pendingApprovalDesc: string;
   quickDemoSection: string;
   adminDemoBtn: string;
   memberDemoBtn: string;
@@ -288,6 +291,9 @@ const translations: Record<Language, Translations> = {
     memberSince: 'Member since',
     directMessageBtn: 'Direct Message',
     youBadge: 'You',
+    pendingBadge: 'Pending Approval',
+    approveMemberBtn: 'Approve',
+    memberApprovedSuccess: 'Member approved!',
 
     signInTitle: 'Sign In to Community Hub',
     registerTitle: 'Create Community Account',
@@ -296,9 +302,9 @@ const translations: Record<Language, Translations> = {
     displayNameLabel: 'Display Name',
     emailLabel: 'Email Address',
     passwordLabel: 'Password',
-    requestedRoleLabel: 'Requested Role',
-    roleMemberOption: 'Community Member (Read Notice Board, DM Admin)',
-    roleAdminOption: 'Administrator (Manage Notice Board, Full DMs)',
+    pendingApprovalNotice: 'New accounts require administrator approval before they can access the community.',
+    pendingApprovalTitle: 'Awaiting Approval',
+    pendingApprovalDesc: 'Your account has been created and is waiting for an administrator to approve it. You\'ll get full access as soon as that happens.',
     quickDemoSection: 'Instant Role Exploration',
     adminDemoBtn: 'Admin Demo',
     memberDemoBtn: 'Member Demo',
@@ -447,6 +453,9 @@ const translations: Record<Language, Translations> = {
     memberSince: 'Medlem sedan',
     directMessageBtn: 'Direktmeddelande',
     youBadge: 'Du',
+    pendingBadge: 'Väntar på godkännande',
+    approveMemberBtn: 'Godkänn',
+    memberApprovedSuccess: 'Medlemmen har godkänts!',
 
     signInTitle: 'Logga in på Gemenskapsportalen',
     registerTitle: 'Skapa gemenskapskonto',
@@ -455,9 +464,9 @@ const translations: Record<Language, Translations> = {
     displayNameLabel: 'Visningsnamn',
     emailLabel: 'E-postadress',
     passwordLabel: 'Lösenord',
-    requestedRoleLabel: 'Önskad roll',
-    roleMemberOption: 'Medlem (Läs anslagstavla, meddelande till admin)',
-    roleAdminOption: 'Administratör (Hantera anslagstavla, alla meddelanden)',
+    pendingApprovalNotice: 'Nya konton kräver godkännande av en administratör innan de får tillgång till gemenskapen.',
+    pendingApprovalTitle: 'Väntar på godkännande',
+    pendingApprovalDesc: 'Ditt konto har skapats och väntar på att en administratör godkänner det. Du får full åtkomst så snart det sker.',
     quickDemoSection: 'Snabbdemo & Rollbyte',
     adminDemoBtn: 'Admin Demo',
     memberDemoBtn: 'Medlem Demo',

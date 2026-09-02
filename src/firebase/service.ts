@@ -520,10 +520,35 @@ export async function saveUserProfile(
       email: profile.email,
       displayName: profile.displayName,
       role: profile.role,
+      status: profile.status || 'approved',
       createdAt: serverTimestamp()
     }, { merge: true });
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
+  }
+}
+
+/**
+ * Admin-only: approve a pending member, granting them community access.
+ */
+export async function approveMember(
+  db: Firestore | null,
+  userId: string
+): Promise<void> {
+  if (!db) {
+    const idx = localStore.users.findIndex((u) => u.uid === userId);
+    if (idx !== -1) {
+      localStore.users[idx] = { ...localStore.users[idx], status: 'approved' };
+      localStore.notifyUsers();
+    }
+    return;
+  }
+
+  const path = `users/${userId}`;
+  try {
+    await updateDoc(doc(db, 'users', userId), { status: 'approved' });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path);
   }
 }
 

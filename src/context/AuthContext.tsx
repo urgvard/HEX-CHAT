@@ -20,11 +20,12 @@ interface AuthContextType {
   firebaseUser: FirebaseUser | null;
   role: UserRole;
   isAdmin: boolean;
+  isApproved: boolean;
   isLoading: boolean;
   isLiveFirebase: boolean;
   firebaseConfig: FirebaseCustomConfig;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
-  registerWithEmail: (email: string, pass: string, displayName: string, role?: UserRole) => Promise<void>;
+  registerWithEmail: (email: string, pass: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
   switchDemoRole: (role: UserRole) => void;
   updateFirebaseConfig: (config: FirebaseCustomConfig) => void;
@@ -71,11 +72,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               });
             } else {
               // Create initial user doc
+              const isHardcodedAdmin = user.email === 'urgvard@gmail.com';
               const newProfile: UserProfile = {
                 uid: user.uid,
                 email: user.email || '',
                 displayName: user.displayName || user.email?.split('@')[0] || 'Community Member',
-                role: user.email === 'urgvard@gmail.com' ? 'admin' : 'member',
+                role: isHardcodedAdmin ? 'admin' : 'member',
+                status: isHardcodedAdmin ? 'approved' : 'pending',
                 createdAt: new Date().toISOString()
               };
               await saveUserProfile(instances.db, newProfile);
@@ -126,12 +129,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const registerWithEmail = async (
     email: string,
     pass: string,
-    displayName: string,
-    requestedRole: UserRole = 'member'
+    displayName: string
   ) => {
     setIsLoading(true);
     try {
-      const assignedRole = email === 'urgvard@gmail.com' ? 'admin' : requestedRole;
+      const isHardcodedAdmin = email === 'urgvard@gmail.com';
+      // Only the hardcoded admin email can ever become admin -- everyone else
+      // registers as a member pending approval, regardless of what role they
+      // requested (Firestore rules enforce this server-side too).
+      const assignedRole: UserRole = isHardcodedAdmin ? 'admin' : 'member';
+      const assignedStatus = isHardcodedAdmin ? 'approved' : 'pending';
       if (firebaseInstances.auth && firebaseInstances.isLive) {
         const cred = await createUserWithEmailAndPassword(firebaseInstances.auth, email, pass);
         const profile: UserProfile = {
@@ -139,6 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email,
           displayName,
           role: assignedRole,
+          status: assignedStatus,
           createdAt: new Date().toISOString()
         };
         if (firebaseInstances.db) {
@@ -151,6 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email,
           displayName,
           role: assignedRole,
+          status: assignedStatus,
           createdAt: new Date().toISOString(),
           avatarColor: assignedRole === 'admin' ? 'bg-emerald-600' : 'bg-blue-600'
         };
@@ -186,6 +195,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const role: UserRole = currentUser?.role || 'member';
   const isAdmin = role === 'admin';
+  // Gate is only meaningful once really signed in against live Firebase; the local
+  // demo/preview mode (and the default demo fallback profile before a real sign-in)
+  // always has full instant access, matching its "quick exploration" purpose.
+  const isApproved =
+    !firebaseInstances.isLive || isAdmin || currentUser?.status !== 'pending';
 
   return (
     <AuthContext.Provider
@@ -194,6 +208,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         firebaseUser,
         role,
         isAdmin,
+        isApproved,
         isLoading,
         isLiveFirebase: !!firebaseInstances.isLive,
         firebaseConfig: config,

@@ -26,7 +26,7 @@ function toMillis(timestamp: any): number {
 }
 
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { db, currentUser } = useAuth();
+  const { db, currentUser, isApproved } = useAuth();
   const { t } = usePreferences();
   const [noticesUnread, setNoticesUnread] = useState(0);
   const [messagesUnread, setMessagesUnread] = useState(0);
@@ -55,8 +55,12 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // Real-time watch for new community notices (skips the initial snapshot so
-  // existing notices don't count as "new" on load).
+  // existing notices don't count as "new" on load). Skipped entirely while
+  // pending approval, since Firestore rules deny these reads until an admin
+  // approves the account.
   useEffect(() => {
+    if (!isApproved) return;
+
     seenNoticeIds.current = new Set();
     noticesInitialized.current = false;
 
@@ -77,13 +81,14 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     return () => unsubscribe();
-  }, [db, t]);
+  }, [db, t, isApproved]);
 
   // Real-time watch for incoming DMs across all of the user's conversations
   // (identified via lastMessageSenderId, so the sender's own outgoing
-  // messages never self-notify).
+  // messages never self-notify). Skipped while pending approval, same reason
+  // as the notices watch above.
   useEffect(() => {
-    if (!currentUser) {
+    if (!currentUser || !isApproved) {
       prevConvUpdatedAt.current = new Map();
       convsInitialized.current = false;
       return;
@@ -119,7 +124,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     return () => unsubscribe();
-  }, [db, currentUser?.uid, currentUser?.role, t]);
+  }, [db, currentUser?.uid, currentUser?.role, t, isApproved]);
 
   const markNoticesRead = () => setNoticesUnread(0);
   const markMessagesRead = () => setMessagesUnread(0);

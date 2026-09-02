@@ -3,12 +3,14 @@ import {
   Users,
   MessageSquare,
   Search,
-  Calendar
+  Calendar,
+  Clock,
+  UserCheck
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { usePreferences } from '../context/PreferencesContext';
-import { subscribeUsersDirectory } from '../firebase/service';
+import { subscribeUsersDirectory, approveMember } from '../firebase/service';
 
 interface UserDirectoryProps {
   onStartMessage: (targetUid: string) => void;
@@ -21,6 +23,19 @@ export const UserDirectory: React.FC<UserDirectoryProps> = ({ onStartMessage }) 
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'member'>('all');
+  const [approvingUid, setApprovingUid] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const handleApprove = async (userId: string) => {
+    setApprovingUid(userId);
+    try {
+      await approveMember(db, userId);
+      setSuccessMessage(t('memberApprovedSuccess'));
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } finally {
+      setApprovingUid(null);
+    }
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -70,6 +85,13 @@ export const UserDirectory: React.FC<UserDirectoryProps> = ({ onStartMessage }) 
           </div>
         </div>
       </div>
+
+      {successMessage && (
+        <div className="flex items-center gap-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 p-3.5 text-xs text-emerald-800 dark:text-emerald-300 shadow-xs">
+          <UserCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <span>{successMessage}</span>
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -129,6 +151,7 @@ export const UserDirectory: React.FC<UserDirectoryProps> = ({ onStartMessage }) 
           {filteredUsers.map((user) => {
             const isMe = user.uid === currentUser?.uid;
             const isUserAdmin = user.role === 'admin';
+            const isPending = user.status === 'pending';
             const joinedDate = formatLocalizedDate(user.createdAt) || '2026';
 
             return (
@@ -163,13 +186,21 @@ export const UserDirectory: React.FC<UserDirectoryProps> = ({ onStartMessage }) 
                       </div>
                     </div>
 
-                    <span className={`text-[10px] px-2 py-0.5 rounded-md font-semibold border shrink-0 ${
-                      isUserAdmin
-                        ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
-                        : 'bg-blue-50 dark:bg-blue-950/60 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300'
-                    }`}>
-                      {isUserAdmin ? t('roleAdmin') : t('roleMember')}
-                    </span>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className={`text-[10px] px-2 py-0.5 rounded-md font-semibold border ${
+                        isUserAdmin
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
+                          : 'bg-blue-50 dark:bg-blue-950/60 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300'
+                      }`}>
+                        {isUserAdmin ? t('roleAdmin') : t('roleMember')}
+                      </span>
+                      {isPending && (
+                        <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-md font-semibold border bg-amber-50 dark:bg-amber-950/60 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300">
+                          <Clock className="w-3 h-3" />
+                          {t('pendingBadge')}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -177,6 +208,19 @@ export const UserDirectory: React.FC<UserDirectoryProps> = ({ onStartMessage }) 
                     <span>{t('memberSince')} {joinedDate}</span>
                   </div>
                 </div>
+
+                {/* Approve action (admin only, pending members only) */}
+                {isAdmin && isPending && (
+                  <button
+                    id={`btn-approve-user-${user.uid}`}
+                    onClick={() => handleApprove(user.uid)}
+                    disabled={approvingUid === user.uid}
+                    className="mt-4 w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white py-2 text-xs font-semibold shadow-md shadow-emerald-600/20 active:scale-98 transition disabled:opacity-50"
+                  >
+                    <UserCheck className="w-3.5 h-3.5" />
+                    <span>{t('approveMemberBtn')}</span>
+                  </button>
+                )}
 
                 {/* Message action */}
                 {!isMe && (

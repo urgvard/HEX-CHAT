@@ -1,10 +1,12 @@
 export type UserRole = 'admin' | 'member';
+export type UserStatus = 'pending' | 'approved';
 
 export interface UserProfile {
   uid: string;
   email: string;
   displayName: string;
   role: UserRole;
+  status?: UserStatus; // absent == 'approved', for accounts created before this field existed
   createdAt: string | number | { seconds: number; nanoseconds: number };
   avatarColor?: string;
 }

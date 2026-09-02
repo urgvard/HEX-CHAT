@@ -8,7 +8,9 @@ import {
   BookOpen,
   Sun,
   Moon,
-  Globe
+  Globe,
+  Clock,
+  LogOut
 } from 'lucide-react';
 import { ActiveTab } from './types';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -24,7 +26,7 @@ import { FirebaseConfigModal } from './components/FirebaseConfigModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 
 function MainApp() {
-  const { currentUser, role, isAdmin } = useAuth();
+  const { currentUser, role, isAdmin, isApproved, logout } = useAuth();
   const { theme, toggleTheme, language, toggleLanguage, t } = usePreferences();
   const { markNoticesRead, markMessagesRead } = useNotifications();
   const [activeTab, setActiveTab] = useState<ActiveTab>('notices');
@@ -45,6 +47,28 @@ function MainApp() {
     setActiveTab('messages');
     markMessagesRead();
   };
+
+  if (!isApproved) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex items-center justify-center p-4 antialiased transition-colors duration-200">
+        <div className="w-full max-w-sm rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xl text-center space-y-4">
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 flex items-center justify-center text-amber-500 dark:text-amber-400 mx-auto shadow-xs">
+            <Clock className="w-6 h-6" />
+          </div>
+          <h1 className="text-base font-bold text-slate-900 dark:text-white">{t('pendingApprovalTitle')}</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{t('pendingApprovalDesc')}</p>
+          <button
+            id="btn-pending-signout"
+            onClick={logout}
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>{t('signOut')}</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col md:flex-row antialiased selection:bg-blue-600 selection:text-white transition-colors duration-200">

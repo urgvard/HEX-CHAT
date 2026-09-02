@@ -29,7 +29,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [role, setRole] = useState<UserRole>('member');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +48,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           setIsSubmitting(false);
           return;
         }
-        await registerWithEmail(email, password, displayName.trim(), role);
+        await registerWithEmail(email, password, displayName.trim());
       }
       onClose();
     } catch (err: any) {
@@ -185,20 +184,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
 
           {mode === 'register' && (
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                {t('requestedRoleLabel')}
-              </label>
-              <select
-                id="select-auth-role"
-                value={role}
-                onChange={(e) => setRole(e.target.value as UserRole)}
-                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
-              >
-                <option value="member">{t('roleMemberOption')}</option>
-                <option value="admin">{t('roleAdminOption')}</option>
-              </select>
-            </div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              {t('pendingApprovalNotice')}
+            </p>
           )}
 
           <button
