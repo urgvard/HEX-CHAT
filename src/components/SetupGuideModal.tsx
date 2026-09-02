@@ -95,8 +95,14 @@ service cloud.firestore {
     }
 
     // 1. Users Collection
+    // get/list are split (rather than a single \`allow read\`) because a \`list\`
+    // query has no filter on document ID, so Firestore can't statically prove
+    // isValidId(userId) holds for an unconstrained wildcard and rejects the whole
+    // query up front — even against an empty collection. Only \`get\` (a concrete,
+    // known document ID) can safely check it.
     match /users/{userId} {
-      allow read: if isSignedIn() && isValidId(userId);
+      allow get: if isSignedIn() && isValidId(userId);
+      allow list: if isSignedIn();
       allow create: if isSignedIn() && isValidId(userId) && request.auth.uid == userId && isValidUser(request.resource.data) &&
         (request.resource.data.role == 'member' || isAdmin());
       allow update: if isSignedIn() && isValidId(userId) && isValidUser(request.resource.data) && (
@@ -107,8 +113,10 @@ service cloud.firestore {
     }
 
     // 2. Notice Board Collection
+    // Same get/list split as Users above, and for the same reason.
     match /notice_board/{noticeId} {
-      allow read: if isSignedIn() && isValidId(noticeId);
+      allow get: if isSignedIn() && isValidId(noticeId);
+      allow list: if isSignedIn();
       allow create: if isAdmin() && isValidId(noticeId) && isValidNotice(request.resource.data);
       allow update: if isAdmin() && isValidId(noticeId) && isValidNotice(request.resource.data);
       allow delete: if isAdmin() && isValidId(noticeId);
@@ -129,8 +137,13 @@ service cloud.firestore {
       allow delete: if isAdmin() && isValidId(conversationId);
 
       // Subcollection: Messages
+      // Same get/list split as Users/Notice Board: conversationId is a fixed parent
+      // path segment (safe to check even in list), but messageId is the query's own
+      // unconstrained wildcard, so isValidId(messageId) can only be checked on get.
       match /messages/{messageId} {
-        allow read: if isSignedIn() && isValidId(conversationId) && isValidId(messageId) &&
+        allow get: if isSignedIn() && isValidId(conversationId) && isValidId(messageId) &&
+          (request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants || isAdmin());
+        allow list: if isSignedIn() && isValidId(conversationId) &&
           (request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants || isAdmin());
         allow create: if isSignedIn() && isValidId(conversationId) && isValidId(messageId) &&
           request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants &&
