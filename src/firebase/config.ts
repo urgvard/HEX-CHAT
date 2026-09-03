@@ -56,8 +56,16 @@ export function initFirebase(config: FirebaseCustomConfig = getStoredFirebaseCon
     // call, unlike getFirestore()); ignoreUndefinedProperties lets writes include
     // optional fields left as `undefined` (e.g. no attachment on a notice/message)
     // without addDoc/setDoc throwing "Unsupported field value: undefined".
+    // experimentalAutoDetectLongPolling works around certain mobile/cellular
+    // carriers and proxies that silently break Firestore's default WebChannel
+    // streaming transport -- onSnapshot listeners hang forever (stuck loading
+    // skeletons) instead of erroring, with no console signal, until this falls
+    // back to long-polling automatically.
     dbInstance = isNewApp
-      ? initializeFirestore(appInstance, { ignoreUndefinedProperties: true })
+      ? initializeFirestore(appInstance, {
+          ignoreUndefinedProperties: true,
+          experimentalAutoDetectLongPolling: true
+        })
       : getFirestore(appInstance);
     storageInstance = getStorage(appInstance);
     return { app: appInstance, auth: authInstance, db: dbInstance, storage: storageInstance, isLive: true };
