@@ -69,6 +69,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 email: user.email || data.email,
                 displayName: data.displayName || user.displayName || 'Member',
                 role: data.role || (user.email === 'urgvard@gmail.com' ? 'admin' : 'member'),
+                status: data.status,
+                notifyOnDMs: data.notifyOnDMs,
+                notifyOnNotices: data.notifyOnNotices,
                 createdAt: data.createdAt || new Date().toISOString()
               });
             } else {
@@ -90,7 +93,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.warn('Error fetching Firestore user profile:', e);
         }
       } else {
-        // Not logged in to live Firebase
+        // Not signed in to live Firebase -- must NOT leave the demo fallback
+        // profile in place here. It looks identical to a real logged-in admin
+        // (same badge, same name), so a visitor who isn't actually
+        // authenticated has no way to tell the difference: every backend
+        // action then fails with a confusing "insufficient permissions"
+        // error instead of a clear "please sign in" prompt.
+        setCurrentUser(null);
       }
       setIsLoading(false);
     });
