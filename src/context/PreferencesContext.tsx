@@ -507,7 +507,7 @@ const translations: Record<Language, Translations> = {
     iosStep3: 'Tryck på "Lägg till" i övre högra hörnet för att starta i helskärm.',
     androidDesktopHeader: 'På Android (Chrome) & Skrivbord:',
     androidStep1: 'Tryck på webbläsarmenyn (⋮) och välj "Installera app" eller "Lägg till på startskärmen".',
-    gotItBtn: 'Förstått'
+    gotItBtn: 'Förstått', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Verktyg och vägledning för ett enklare liv med diabetes.', diabeteasyPromoLink: 'Besök diabeteasy.org'
   }
 };
 
