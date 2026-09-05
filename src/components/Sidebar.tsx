@@ -142,8 +142,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-100 md:hidden transition"
             >
               <X className="w-5 h-5" />
-            </button>
+                        </button>
           </div>
+
+          {/* Diabeteasy Promo */}
+          
+            id="link-diabeteasy-promo"
+            href="https://diabeteasy.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mx-3.5 mt-3.5 flex items-center gap-3 p-3 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition group"
+          >
+            <div className="w-9 h-9 shrink-0 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-sm">
+              <HeartPulse className="w-4.5 h-4.5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-emerald-800 dark:text-emerald-300 leading-tight">
+                {t('diabeteasyPromoTitle')}
+              </p>
+              <p className="text-[10.5px] text-emerald-700/80 dark:text-emerald-400/80 leading-snug">
+                {t('diabeteasyPromoText')}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 ml-auto shrink-0 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+          </a>
 
           {/* Navigation Links */}
           <nav className="p-3.5 space-y-1.5">
