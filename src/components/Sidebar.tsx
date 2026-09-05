@@ -15,7 +15,8 @@ import {
   Sun,
   Moon,
   Globe,
-  Mail
+  Mail,
+  HeartPulse
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 import { useAuth } from '../context/AuthContext';
