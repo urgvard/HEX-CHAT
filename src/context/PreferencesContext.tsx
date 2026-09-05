@@ -176,7 +176,7 @@ export interface Translations {
   iosStep3: string;
   androidDesktopHeader: string;
   androidStep1: string;
-  gotItBtn: string;
+  gotItBtn: string;diabeteasyPromoTitle: string; diabeteasyPromoText: string; diabeteasyPromoLink: string;
 }
 
 const translations: Record<Language, Translations> = {
