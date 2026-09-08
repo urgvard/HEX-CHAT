@@ -186,7 +186,10 @@ export interface Translations {
   iosStep3: string;
   androidDesktopHeader: string;
   androidStep1: string;
-  gotItBtn: string;
+    gotItBtn: string;
+  diabeteasyPromoTitle: string;
+  diabeteasyPromoText: string;
+  diabeteasyPromoLink: string;
 }
 
 const translations: Record<Language, Translations> = {
@@ -363,7 +366,7 @@ const translations: Record<Language, Translations> = {
     iosStep3: 'Tap "Add" in the top-right corner to launch fullscreen.',
     androidDesktopHeader: 'On Android (Chrome) & Desktop:',
     androidStep1: 'Tap the browser menu (⋮) and choose "Install app" or "Add to Home screen".',
-    gotItBtn: 'Got it'
+    gotItBtn: 'Got it', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Tools and guidance for an easier life with diabetes.', diabeteasyPromoLink: 'Visit diabeteasy.org'
   },
   sv: {
     appTitle: 'Gemenskapsportal',
@@ -538,7 +541,7 @@ const translations: Record<Language, Translations> = {
     iosStep3: 'Tryck på "Lägg till" i övre högra hörnet för att starta i helskärm.',
     androidDesktopHeader: 'På Android (Chrome) & Skrivbord:',
     androidStep1: 'Tryck på webbläsarmenyn (⋮) och välj "Installera app" eller "Lägg till på startskärmen".',
-    gotItBtn: 'Förstått'
+    gotItBtn: 'Förstått', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Verktyg och vägledning för ett enklare liv med diabetes.', diabeteasyPromoLink: 'Besök diabeteasy.org'
   }
 };
 
