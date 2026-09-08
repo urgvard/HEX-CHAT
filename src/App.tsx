@@ -10,13 +10,15 @@ import {
   Moon,
   Globe,
   Clock,
-  LogOut
+  LogOut,
+  LayoutDashboard
 } from 'lucide-react';
 import { ActiveTab } from './types';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { PreferencesProvider, usePreferences } from './context/PreferencesContext';
 import { NotificationsProvider, useNotifications } from './context/NotificationsContext';
 import { Sidebar } from './components/Sidebar';
+import { Dashboard } from './components/Dashboard';
 import { NoticeBoard } from './components/NoticeBoard';
 import { DirectMessages } from './components/DirectMessages';
 import { UserDirectory } from './components/UserDirectory';
@@ -29,7 +31,7 @@ function MainApp() {
   const { currentUser, role, isAdmin, isApproved, logout } = useAuth();
   const { theme, toggleTheme, language, toggleLanguage, t } = usePreferences();
   const { markNoticesRead, markMessagesRead } = useNotifications();
-  const [activeTab, setActiveTab] = useState<ActiveTab>('notices');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
@@ -102,6 +104,12 @@ function MainApp() {
 
             <div>
               <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 tracking-tight capitalize flex items-center gap-2">
+                {activeTab === 'dashboard' && (
+                  <>
+                    <LayoutDashboard className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span>{t('dashboardTitle')}</span>
+                  </>
+                )}
                 {activeTab === 'notices' && (
                   <>
                     <Bell className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -184,6 +192,7 @@ function MainApp() {
 
         {/* Tab Viewport */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          {activeTab === 'dashboard' && <Dashboard onSelectTab={handleSelectTab} />}
           {activeTab === 'notices' && <NoticeBoard />}
           {activeTab === 'messages' && (
             <DirectMessages

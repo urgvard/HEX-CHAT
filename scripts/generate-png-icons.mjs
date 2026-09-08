@@ -2,7 +2,8 @@
 import fs from 'fs';
 import zlib from 'zlib';
 
-function createPNG(width, height, r, g, b, a = 255) {
+function createPNG(width, height, r, g, b, a = 255, options = {}) {
+  const { maskableSafeZone = false } = options;
   // A minimal valid uncompressed/deflated raw RGBA PNG generator
   const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
@@ -29,10 +30,14 @@ function createPNG(width, height, r, g, b, a = 255) {
     for (let x = 0; x < width; x++) {
       const pxOffset = rowOffset + 1 + x * 4;
       
-      // Draw background gradient & central community icon
+      // Draw background gradient & central community icon. For maskable icons,
+      // shrink the artwork into the inner ~80% "safe zone" (per the W3C
+      // maskable-icon spec) so Android's circular/squircle home-screen mask
+      // doesn't crop it -- everything outside that zone is just background.
       const cx = width / 2;
       const cy = height / 2;
-      const distFromCenter = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
+      const scale = maskableSafeZone ? 0.8 : 1;
+      const distFromCenter = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2) / scale;
       const isInnerCircle = distFromCenter < width * 0.25;
       const isRing = distFromCenter >= width * 0.32 && distFromCenter <= width * 0.42 && y > cy;
 
@@ -87,10 +92,11 @@ function crc32(buf) {
 
 const p192 = createPNG(192, 192, 30, 58, 138);
 const p512 = createPNG(512, 512, 30, 58, 138);
+const p512Maskable = createPNG(512, 512, 30, 58, 138, 255, { maskableSafeZone: true });
 const appleIcon = createPNG(180, 180, 30, 58, 138);
 
 fs.writeFileSync('public/pwa-192x192.png', p192);
 fs.writeFileSync('public/pwa-512x512.png', p512);
-fs.writeFileSync('public/pwa-maskable-512x512.png', p512);
+fs.writeFileSync('public/pwa-maskable-512x512.png', p512Maskable);
 fs.writeFileSync('public/apple-touch-icon.png', appleIcon);
 console.log('PWA PNG Icons successfully generated in public/ directory.');

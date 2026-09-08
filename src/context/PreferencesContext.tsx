@@ -8,6 +8,16 @@ export interface Translations {
   appTitle: string;
   appSubtitleLive: string;
   appSubtitleLocal: string;
+  navDashboard: string;
+  navDashboardDesc: string;
+  dashboardTitle: string;
+  dashboardWelcome: string;
+  statNotices: string;
+  statConversations: string;
+  statMembers: string;
+  statDownloads: string;
+  recentNoticesTitle: string;
+  viewAllBtn: string;
   navNoticeBoard: string;
   navNoticeBoardDesc: string;
   navDirectMessages: string;
@@ -184,6 +194,16 @@ const translations: Record<Language, Translations> = {
     appTitle: 'Community Hub',
     appSubtitleLive: 'Firebase Live',
     appSubtitleLocal: 'Community Portal',
+    navDashboard: 'Dashboard',
+    navDashboardDesc: 'Overview & activity',
+    dashboardTitle: 'Dashboard',
+    dashboardWelcome: 'Welcome back,',
+    statNotices: 'Notices',
+    statConversations: 'Conversations',
+    statMembers: 'Members',
+    statDownloads: 'Downloads',
+    recentNoticesTitle: 'Recent Notices',
+    viewAllBtn: 'View all',
     navNoticeBoard: 'Notice Board',
     navNoticeBoardDesc: 'Public announcements',
     navDirectMessages: 'Direct Messages',
@@ -349,6 +369,16 @@ const translations: Record<Language, Translations> = {
     appTitle: 'Gemenskapsportal',
     appSubtitleLive: 'Live Firebase',
     appSubtitleLocal: 'Gemenskapsportal',
+    navDashboard: 'Översikt',
+    navDashboardDesc: 'Översikt & aktivitet',
+    dashboardTitle: 'Översikt',
+    dashboardWelcome: 'Välkommen tillbaka,',
+    statNotices: 'Anslag',
+    statConversations: 'Konversationer',
+    statMembers: 'Medlemmar',
+    statDownloads: 'Nedladdningar',
+    recentNoticesTitle: 'Senaste anslagen',
+    viewAllBtn: 'Visa alla',
     navNoticeBoard: 'Anslagstavla',
     navNoticeBoardDesc: 'Offentliga meddelanden',
     navDirectMessages: 'Direktmeddelanden',

@@ -11,7 +11,8 @@ import { UserProfile, UserRole, FirebaseCustomConfig } from '../types';
 import {
   initFirebase,
   getStoredFirebaseConfig,
-  saveStoredFirebaseConfig
+  saveStoredFirebaseConfig,
+  isPlaceholderConfig
 } from '../firebase/config';
 import { saveUserProfile, localStore } from '../firebase/service';
 import { triggerNotificationEmail } from '../lib/notifyEmail';
@@ -41,8 +42,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [firebaseInstances, setFirebaseInstances] = useState(() => initFirebase(config));
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
-    // Default to admin demo user for instant explore experience
-    return localStore.users[0];
+    // The "instant explore" demo fallback profile only makes sense when no real
+    // Firebase project is configured at all. With a real project configured, it
+    // must never appear -- it looks identical to a real logged-in admin (same
+    // badge, same name), so it would silently mask "not actually signed in" or
+    // "Firebase failed to initialize" behind what looks like a working session.
+    return isPlaceholderConfig(getStoredFirebaseConfig()) ? localStore.users[0] : null;
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -52,6 +57,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setFirebaseInstances(instances);
 
     if (!instances.auth || !instances.isLive) {
+      // Real project configured but init itself failed (see config.ts) -- keep
+      // currentUser null rather than falling into the demo fallback, for the
+      // same reason as above.
+      if (!isPlaceholderConfig(config)) {
+        setCurrentUser(null);
+      }
       setIsLoading(false);
       return;
     }
@@ -92,13 +103,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (e) {
           console.warn('Error fetching Firestore user profile:', e);
         }
-      } else {
-        // Not signed in to live Firebase -- must NOT leave the demo fallback
-        // profile in place here. It looks identical to a real logged-in admin
-        // (same badge, same name), so a visitor who isn't actually
-        // authenticated has no way to tell the difference: every backend
-        // action then fails with a confusing "insufficient permissions"
-        // error instead of a clear "please sign in" prompt.
+      } else if (!isPlaceholderConfig(config)) {
+        // Not signed in to a real, configured live project -- must NOT leave the
+        // demo fallback profile in place here. It looks identical to a real
+        // logged-in admin (same badge, same name), so a visitor who isn't
+        // actually authenticated has no way to tell the difference: every
+        // backend action then fails with a confusing "insufficient
+        // permissions" error instead of a clear "please sign in" prompt.
+        // (Skipped for the true placeholder/no-.env local dev config, which
+        // intentionally keeps the instant-explore demo profile.)
         setCurrentUser(null);
       }
       setIsLoading(false);

@@ -1,8 +1,27 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
+import {
+  getAuth,
+  initializeAuth,
+  indexedDBLocalPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  inMemoryPersistence,
+  Auth
+} from 'firebase/auth';
 import { getFirestore, initializeFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 import { FirebaseCustomConfig } from '../types';
+
+const PLACEHOLDER_API_KEY = 'AIzaSyDemoCommunityKey_Placeholder123';
+
+// True only for the non-functional built-in placeholder config (no real
+// VITE_FIREBASE_* env vars set and no custom config saved via the Setup
+// modal). Used to decide whether the "instant explore" demo fallback
+// profile is appropriate to show, versus a real deployment where it would
+// just mask a genuine connection/auth problem.
+export function isPlaceholderConfig(config: FirebaseCustomConfig): boolean {
+  return config.apiKey === PLACEHOLDER_API_KEY;
+}
 
 // Baked in at build time from Netlify/Vite env vars when present (see .env.example).
 // Falls back to a non-functional placeholder for local dev without a .env file —
@@ -51,7 +70,22 @@ export function initFirebase(config: FirebaseCustomConfig = getStoredFirebaseCon
     } else {
       appInstance = getApp();
     }
-    authInstance = getAuth(appInstance);
+    // initializeAuth() (like initializeFirestore() below) can only be called once
+    // per app. The explicit persistence fallback chain matters on iOS
+    // Safari/WKWebView and some restrictive Android WebViews, where IndexedDB can
+    // be unavailable or blocked (Private Browsing, storage quota, older WebKit
+    // versions) -- getAuth()'s implicit default can fail outright there instead
+    // of degrading gracefully to a working (if less persistent) option.
+    authInstance = isNewApp
+      ? initializeAuth(appInstance, {
+          persistence: [
+            indexedDBLocalPersistence,
+            browserLocalPersistence,
+            browserSessionPersistence,
+            inMemoryPersistence
+          ]
+        })
+      : getAuth(appInstance);
     // initializeFirestore() can only be called once per app (it throws on a second
     // call, unlike getFirestore()); ignoreUndefinedProperties lets writes include
     // optional fields left as `undefined` (e.g. no attachment on a notice/message)
@@ -70,7 +104,15 @@ export function initFirebase(config: FirebaseCustomConfig = getStoredFirebaseCon
     storageInstance = getStorage(appInstance);
     return { app: appInstance, auth: authInstance, db: dbInstance, storage: storageInstance, isLive: true };
   } catch (err) {
-    console.info('Firebase initializing with simulated offline/demo mode or standard fallback:', err);
+    if (isPlaceholderConfig(config)) {
+      console.info('No Firebase config set -- running in local-storage demo mode.', err);
+    } else {
+      // A real project is configured but init genuinely failed (e.g. storage
+      // APIs blocked/unavailable on this browser). Surface this loudly --
+      // silently falling back to demo mode here would otherwise look
+      // identical to a working live app, just with fake data.
+      console.error('Firebase initialization failed for a configured live project:', err);
+    }
     return { app: null, auth: null, db: null, storage: null, isLive: false };
   }
 }

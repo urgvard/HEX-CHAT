@@ -15,7 +15,8 @@ import {
   Sun,
   Moon,
   Globe,
-  Mail
+  Mail,
+  LayoutDashboard
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 import { useAuth } from '../context/AuthContext';
@@ -70,6 +71,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const navItems = [
+    {
+      id: 'dashboard' as ActiveTab,
+      label: t('navDashboard'),
+      icon: LayoutDashboard,
+      description: t('navDashboardDesc'),
+      badge: 0
+    },
     {
       id: 'notices' as ActiveTab,
       label: t('navNoticeBoard'),

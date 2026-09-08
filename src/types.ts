@@ -52,4 +52,4 @@ export interface FirebaseCustomConfig {
   appId: string;
 }
 
-export type ActiveTab = 'notices' | 'messages' | 'directory' | 'guide';
+export type ActiveTab = 'dashboard' | 'notices' | 'messages' | 'directory' | 'guide';
