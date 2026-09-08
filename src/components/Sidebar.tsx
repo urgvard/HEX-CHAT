@@ -17,7 +17,7 @@ import {
   Globe,
   Mail,
   LayoutDashboard,
-  HeartPulse
+  Hexagon
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 import { useAuth } from '../context/AuthContext';
@@ -162,7 +162,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="mx-3.5 mt-3.5 flex items-center gap-3 p-3 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition group"
           >
             <div className="w-9 h-9 shrink-0 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-sm">
-              <HeartPulse className="w-4.5 h-4.5" />
+              <Hexagon className="w-4.5 h-4.5" />
             </div>
             <div className="min-w-0">
               <p className="text-xs font-bold text-emerald-800 dark:text-emerald-300 leading-tight">

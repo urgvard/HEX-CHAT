@@ -366,7 +366,7 @@ const translations: Record<Language, Translations> = {
     iosStep3: 'Tap "Add" in the top-right corner to launch fullscreen.',
     androidDesktopHeader: 'On Android (Chrome) & Desktop:',
     androidStep1: 'Tap the browser menu (⋮) and choose "Install app" or "Add to Home screen".',
-    gotItBtn: 'Got it', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Tools and guidance for an easier life with diabetes.', diabeteasyPromoLink: 'Visit fredagsgatan.netlify.app'
+    gotItBtn: 'Got it', diabeteasyPromoTitle: 'Hexaflex Explorer', diabeteasyPromoText: 'Interactive ACT & mindfulness tool for psychological flexibility.', diabeteasyPromoLink: 'Visit fredagsgatan.netlify.app'
   },
   sv: {
     appTitle: 'Gemenskapsportal',
@@ -541,7 +541,7 @@ const translations: Record<Language, Translations> = {
     iosStep3: 'Tryck på "Lägg till" i övre högra hörnet för att starta i helskärm.',
     androidDesktopHeader: 'På Android (Chrome) & Skrivbord:',
     androidStep1: 'Tryck på webbläsarmenyn (⋮) och välj "Installera app" eller "Lägg till på startskärmen".',
-    gotItBtn: 'Förstått', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Verktyg och vägledning för ett enklare liv med diabetes.', diabeteasyPromoLink: 'Besök fredagsgatan.netlify.app'
+    gotItBtn: 'Förstått', diabeteasyPromoTitle: 'Hexaflex Explorer', diabeteasyPromoText: 'Interaktivt ACT- och mindfulnessverktyg för psykologisk flexibilitet.', diabeteasyPromoLink: 'Besök fredagsgatan.netlify.app'
   }
 };
 
