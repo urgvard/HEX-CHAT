@@ -366,7 +366,7 @@ const translations: Record<Language, Translations> = {
     iosStep3: 'Tap "Add" in the top-right corner to launch fullscreen.',
     androidDesktopHeader: 'On Android (Chrome) & Desktop:',
     androidStep1: 'Tap the browser menu (⋮) and choose "Install app" or "Add to Home screen".',
-    gotItBtn: 'Got it', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Tools and guidance for an easier life with diabetes.', diabeteasyPromoLink: 'Visit diabeteasy.org'
+    gotItBtn: 'Got it', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Tools and guidance for an easier life with diabetes.', diabeteasyPromoLink: 'Visit fredagsgatan.netlify.app'
   },
   sv: {
     appTitle: 'Gemenskapsportal',
@@ -541,7 +541,7 @@ const translations: Record<Language, Translations> = {
     iosStep3: 'Tryck på "Lägg till" i övre högra hörnet för att starta i helskärm.',
     androidDesktopHeader: 'På Android (Chrome) & Skrivbord:',
     androidStep1: 'Tryck på webbläsarmenyn (⋮) och välj "Installera app" eller "Lägg till på startskärmen".',
-    gotItBtn: 'Förstått', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Verktyg och vägledning för ett enklare liv med diabetes.', diabeteasyPromoLink: 'Besök diabeteasy.org'
+    gotItBtn: 'Förstått', diabeteasyPromoTitle: 'Diabeteasy', diabeteasyPromoText: 'Verktyg och vägledning för ett enklare liv med diabetes.', diabeteasyPromoLink: 'Besök fredagsgatan.netlify.app'
   }
 };
 

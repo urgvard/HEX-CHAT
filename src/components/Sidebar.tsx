@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Diabeteasy Promo */}
           <a
             id="link-diabeteasy-promo"
-            href="https://diabeteasy.org"
+            href="https://fredagsgatan.netlify.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="mx-3.5 mt-3.5 flex items-center gap-3 p-3 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition group"
